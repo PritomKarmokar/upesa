@@ -14,9 +14,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include, re_path
+
+service_name = f'{settings.SERVICE_NAME}'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(f'{service_name}/admin/', admin.site.urls),
+
 ]
+
+# Admin
+admin.site.site_header = "Upesa Admin"
+admin.site.index_title = "Upesa Admin"
+admin.site.site_title = "Upesa Admin"
