@@ -19,7 +19,7 @@ services:
 
   django-web:
     build: .
-    container_name: qpay_db
+    container_name: upesa_db
     ports:
       - "8000:8000"
     depends_on:
