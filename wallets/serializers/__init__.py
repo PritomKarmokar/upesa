@@ -1,0 +1,3 @@
+from .wallets import (
+    CreateWalletSerializer
+)

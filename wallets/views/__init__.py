@@ -1,0 +1,3 @@
+from .wallets import (
+    CreateWalletAPIView
+)
