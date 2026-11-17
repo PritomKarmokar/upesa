@@ -1,6 +1,6 @@
 from ulid import ULID
 
-def generate_ulid() -> str:
+def generate_new_ulid() -> str:
     """
     Generates a lexicographically sortable ULID string.
     """

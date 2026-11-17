@@ -10,3 +10,8 @@ class WalletRoleType(models.TextChoices):
     CUSTOMER = "customer", "Customer"
     AGENT = "agent", "Agent"
     MERCHANT = "merchant", "Merchant"
+
+class UserType(models.TextChoices):
+    CUSTOMER = "customer", "Customer"
+    AGENT = "agent", "Agent"
+    MERCHANT = "merchant", "Merchant"

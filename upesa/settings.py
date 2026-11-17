@@ -54,7 +54,7 @@ THIRD_PARTY_APPS = [
 
 # Add Project Apps Here
 PROJECT_APPS = [
-
+    'wallets',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS

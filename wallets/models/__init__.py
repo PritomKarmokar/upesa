@@ -1,1 +1,1 @@
-from .wallets import WalletUser
+from .users import WalletUser
