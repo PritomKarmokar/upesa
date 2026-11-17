@@ -3,11 +3,11 @@ from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from wallets.exceptions import DuplicateWalletException
-from wallets.models import WalletUser
 from applibs.logger import get_logger
 from applibs.response import error_response, success_response
 
+from wallets.models import WalletUser
+from wallets.exceptions import DuplicateWalletException
 from wallets.serializers import CreateWalletUserSerializer
 
 logger = get_logger(__name__)
