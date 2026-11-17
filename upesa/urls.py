@@ -22,6 +22,7 @@ service_name = f'{settings.SERVICE_NAME}'
 
 urlpatterns = [
     path(f'{service_name}/admin/', admin.site.urls),
+    path(f'{service_name}/', include('wallets.urls')),
 
 ]
 

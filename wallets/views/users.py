@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from wallets.exceptions import DuplicateWalletException
 from wallets.models import WalletUser
 from applibs.logger import get_logger
 from applibs.response import error_response, success_response
@@ -30,13 +31,20 @@ class CreateWalletUserAPIView(APIView):
                 status_code=status.HTTP_409_CONFLICT
             )
 
-        new_user = WalletUser.objects.create_new_user(
-            username=data["username"], mobile_no=data["mobile_no"], user_type=data["user_type"], password=data["password"]
-        )
+        try:
+            new_user = WalletUser.objects.create_new_user(
+                username=data["username"], mobile_no=data["mobile_no"], user_type=data["user_type"], password=data["password"]
+            )
+        except DuplicateWalletException:
+            return error_response(
+                code="DUPLICATE_WALLET", message="Wallet already exists with this phone number.",
+                status_code=status.HTTP_409_CONFLICT
+            )
+
         if new_user is None:
             return error_response(
                 code="WALLET_CREATION_FAILED", message="Wallet creation failed.",
-                status_code=status.HTTP_409_CONFLICT
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
         response_data = {
