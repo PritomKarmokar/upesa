@@ -49,6 +49,7 @@ class CreateWalletUserAPIView(APIView):
 
         response_data = {
             "user_id": new_user.id,
+            "user_type": new_user.user_type,
             "created_at": new_user.created_at,
         }
         return success_response(
