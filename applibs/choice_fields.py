@@ -15,3 +15,12 @@ class UserType(models.TextChoices):
     CUSTOMER = "customer", "Customer"
     AGENT = "agent", "Agent"
     MERCHANT = "merchant", "Merchant"
+
+class WalletType(models.TextChoices):
+    CUSTOMER = "customer", "Customer"
+    AGENT_FLOAT = "agent_float", "Agent Float"
+    MERCHANT = "merchant", "Merchant"
+
+class CurrencyType(models.TextChoices):
+    BDT = "BDT", "BDT"
+    USD = "USD", "USD"

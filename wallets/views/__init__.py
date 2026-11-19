@@ -1,4 +1,2 @@
-# from .wallets import (
-#     CreateWalletAPIView
-# )
+from .wallets import CreateWalletView
 from .users import CreateWalletUserAPIView
