@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from applibs.logger import get_logger
 from applibs.response import error_response, success_response
 
-from wallets.models import WalletUser
+from wallets.models import WalletUser, Wallet
 from wallets.serializers import CreateWalletSerializer
 from wallets.exceptions import DuplicateWalletException
 
@@ -32,7 +32,7 @@ class CreateWalletView(APIView):
             )
 
         try:
-            new_wallet = WalletUser.objects.create_new_wallet(wallet_user=active_wallet_user, wallet_type=data["wallet_type"])
+            new_wallet = Wallet.objects.create_new_wallet(wallet_user=active_wallet_user, wallet_type=data["wallet_type"])
         except DuplicateWalletException:
             return error_response(
                 code="DUPLICATE_WALLET", message="Wallet already exists with this user.",
