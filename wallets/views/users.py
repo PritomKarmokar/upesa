@@ -7,7 +7,7 @@ from applibs.logger import get_logger
 from applibs.response import error_response, success_response
 
 from wallets.models import WalletUser
-from wallets.exceptions import DuplicateWalletException
+from wallets.exceptions import DuplicateUserWalletException
 from wallets.serializers import CreateWalletUserSerializer
 
 logger = get_logger(__name__)
@@ -35,7 +35,7 @@ class CreateWalletUserAPIView(APIView):
             new_user = WalletUser.objects.create_new_user(
                 username=data["username"], mobile_no=data["mobile_no"], user_type=data["user_type"], password=data["password"]
             )
-        except DuplicateWalletException:
+        except DuplicateUserWalletException:
             return error_response(
                 code="DUPLICATE_WALLET", message="Wallet already exists with this phone number.",
                 status_code=status.HTTP_409_CONFLICT
@@ -49,6 +49,7 @@ class CreateWalletUserAPIView(APIView):
 
         response_data = {
             "user_id": new_user.id,
+            "user_type": new_user.user_type,
             "created_at": new_user.created_at,
         }
         return success_response(

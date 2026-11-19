@@ -7,7 +7,7 @@ from applibs.logger import get_logger
 from applibs.helpers import generate_new_ulid
 from applibs.choice_fields import UserType, StatusType
 
-from wallets.exceptions import DuplicateWalletException
+from wallets.exceptions import DuplicateUserWalletException
 
 logger = get_logger(__name__)
 
@@ -21,6 +21,14 @@ class WalletUserManager(models.Manager):
             return False
 
         return True
+
+    def fetch_active_user_by_id(self, user_id: str) -> Optional["WalletUser"]:
+        logger.info({"step": "fetch_wallet_by_id"})
+        try:
+            return self.get(id=user_id, status=StatusType.ACTIVE)
+        except self.model.DoesNotExist:
+            logger.error({"message": f"wallet user with the following {user_id} id does not exist"})
+            return None
 
     def create_new_user(
             self,
@@ -44,7 +52,7 @@ class WalletUserManager(models.Manager):
                 "message": "error occurred while creating new wallet",
                 "error": str(e)
             })
-            raise DuplicateWalletException("Wallet already exists with this phone number.")
+            raise DuplicateUserWalletException("User Wallet already exists with this phone number.")
         except Exception as e:
             logger.error({
                 "message": "unexpected error occurred while creating new wallet",
