@@ -6,7 +6,7 @@ from applibs.validators import is_valid_mobile_no
 
 class CreateWalletUserSerializer(serializers.Serializer):
     username = serializers.CharField(min_length=4, max_length=55)
-    mobile_no = serializers.CharField(min_length=10, max_length=16)
+    mobile_no = serializers.CharField(min_length=11, max_length=16)
     user_type = serializers.ChoiceField(choices=UserType.choices, default=UserType.CUSTOMER)
     password = serializers.CharField(min_length=8, max_length=255, write_only=True, trim_whitespace=False)
     confirm_password = serializers.CharField(min_length=8, max_length=255, write_only=True, trim_whitespace=False)

@@ -3,7 +3,7 @@
 run:
 	python manage.py runserver
 
-makemigrations:
+migrations:
 	python manage.py makemigrations
 
 migrate:
