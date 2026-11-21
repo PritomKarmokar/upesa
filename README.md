@@ -1,4 +1,4 @@
-# Upesa
+# Upesa: Digital Wallet Backend
 
 A Django REST Framework backend for digital wallet user management, authentication, and wallet provisioning.
 
@@ -153,7 +153,3 @@ Make targets are also available: `make run`, `make migrations`, `make migrate`.
 - Replace Django's development server with Gunicorn
 - Serve behind a reverse proxy with TLS
 - Configure database backups, rate limiting, and centralized logging
-
-## License
-
-No license has been specified for this repository.
