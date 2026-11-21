@@ -246,11 +246,14 @@ SIMPLE_JWT = {
 
 # REST FRAMEWORK Config Starts
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    "DEFAULT_AUTHENTICATION_CLASSES": ["applibs.auth.UserAuthentication"],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
 }
 # REST FRAMEWORK Config Ends
 
 # DEVELOPMENT MODE (SET it False in Production)
 DEV_MODE=env.bool('DEV_MODE', False)
+
+# LOGIN Config
+MAX_FAILED_LOGIN_ATTEMPTS=env.int('MAX_FAILED_LOGIN_ATTEMPTS', 3)
+LOCK_DURATION_TILL_MINUTES=timedelta(minutes=env.int('LOCK_DURATION_TILL_MINUTES', 10))

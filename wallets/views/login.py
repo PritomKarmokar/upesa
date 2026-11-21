@@ -7,14 +7,16 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from applibs.logger import get_logger
-from wallets.models import WalletUser
 from applibs.response import error_response, success_response
 
 from wallets.serializers import LoginSerializer
+from wallets.authentication import authenticate_user
+from wallets.exceptions import InvalidCredentials, AccountLocked, AccountNotActive
 
 logger = get_logger(__name__)
 
 class WalletUserLoginView(APIView):
+    authentication_classes = []
     permission_classes = []
     serializers_class = LoginSerializer
 
@@ -30,28 +32,33 @@ class WalletUserLoginView(APIView):
         mobile_no = data["mobile_no"]
         password = data["password"]
 
-        wallet_user = WalletUser.objects.fetch_active_user(mobile_no=mobile_no)
-        if not wallet_user:
+        try:
+            wallet_user = authenticate_user(mobile_no=mobile_no, password=password)
+        except InvalidCredentials:
             return error_response(
                 code="INVALID_CREDENTIALS", message="Invalid credentials.", status_code=status.HTTP_401_UNAUTHORIZED
             )
-
-        valid_password = wallet_user.check_password(password)
-        if not valid_password:
+        except AccountLocked:
             return error_response(
-                code="INVALID_CREDENTIALS", message="Invalid credentials.", status_code=status.HTTP_401_UNAUTHORIZED
+                code="ACCOUNT_LOCKED", message="Too many failed attempts. Try again later.",
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS
+            )
+        except AccountNotActive:
+            return error_response(
+                code="ACCOUNT_NOT_ACTIVE", message="Your account is not active. Contact support.",
+                status_code=status.HTTP_403_FORBIDDEN,
             )
 
-        wallet_user.update_last_login()
+
+        wallet_user.register_successful_login_attempt()
 
         refresh_token = RefreshToken.for_user(wallet_user)
         access_token = refresh_token.access_token
         response_data = {
             "access_token": str(access_token),
             "refresh_token": str(refresh_token),
-            "header_token": settings.JWT_AUTH_HEADER_TYPES,
             "expires_in": int(access_token.lifetime.total_seconds()),
-            "token_type": "Bearer"
+            "token_type": settings.JWT_AUTH_HEADER_TYPES
         }
         return success_response(
             data=response_data, status_code=status.HTTP_200_OK

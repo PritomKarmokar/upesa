@@ -1,5 +1,6 @@
 from typing import Optional
 
+from django.conf import settings
 from django.utils import timezone
 from django.db import models, transaction, IntegrityError
 from django.contrib.auth.hashers import make_password, check_password
@@ -83,6 +84,8 @@ class WalletUser(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     last_login = models.DateTimeField(blank=True, null=True)
+    failed_login_attempts = models.PositiveIntegerField(default=0)
+    locked_until = models.DateTimeField(blank=True, null=True)
 
     objects = WalletUserManager()
 
@@ -94,8 +97,36 @@ class WalletUser(models.Model):
     def __str__(self) -> str:
         return f"{self.username} {self.user_type} {self.status}"
 
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return self.status == StatusType.ACTIVE
+
+    @property
+    def is_locked(self) -> bool:
+        return self.locked_until is not None and self.locked_until > timezone.now()
+
+    def set_password(self, raw_password: str):
+        self.password_hash = make_password(raw_password)
+
+
     def check_password(self, password: str) -> bool:
         return check_password(password, self.password_hash)
+
+    def register_successful_login_attempt(self):
+        self.failed_login_attempts = 0
+        self.locked_until = None
+        self.last_login = timezone.now()
+        self.save(update_fields=["failed_login_attempts", "locked_until", "last_login"])
+
+    def register_failed_login_attempts(self):
+        self.failed_login_attempts += 1
+        if self.failed_login_attempts >= settings.MAX_FAILED_LOGIN_ATTEMPTS:
+            self.locked_until = timezone.now() + settings.LOCK_DURATION_TILL_MINUTES
+        self.save(update_fields=["failed_login_attempts", "locked_until"])
 
     def update_last_login(self):
         self.last_login = timezone.now()
