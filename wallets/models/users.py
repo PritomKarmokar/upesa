@@ -1,7 +1,8 @@
 from typing import Optional
 
-from django.contrib.auth.hashers import make_password
+from django.utils import timezone
 from django.db import models, transaction, IntegrityError
+from django.contrib.auth.hashers import make_password, check_password
 
 from applibs.logger import get_logger
 from applibs.helpers import generate_new_ulid
@@ -21,6 +22,14 @@ class WalletUserManager(models.Manager):
             return False
 
         return True
+
+    def fetch_active_user(self, mobile_no: str) -> Optional["WalletUser"]:
+        logger.info({"step": "fetch_active_user"})
+        try:
+            return self.get(mobile_no=mobile_no, status=StatusType.ACTIVE)
+        except self.model.DoesNotExist:
+            logger.error({"message": f"wallet user with the following {mobile_no} does not exist"})
+            return None
 
     def fetch_active_user_by_id(self, user_id: str) -> Optional["WalletUser"]:
         logger.info({"step": "fetch_wallet_by_id"})
@@ -73,6 +82,8 @@ class WalletUser(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    last_login = models.DateTimeField(blank=True, null=True)
+
     objects = WalletUserManager()
 
     class Meta:
@@ -82,3 +93,10 @@ class WalletUser(models.Model):
 
     def __str__(self) -> str:
         return f"{self.username} {self.user_type} {self.status}"
+
+    def check_password(self, password: str) -> bool:
+        return check_password(password, self.password_hash)
+
+    def update_last_login(self):
+        self.last_login = timezone.now()
+        self.save(update_fields=["last_login"])

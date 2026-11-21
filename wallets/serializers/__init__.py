@@ -5,3 +5,7 @@ from .wallets import (
 from .users import (
     CreateWalletUserSerializer
 )
+
+from .login import (
+    LoginSerializer
+)
