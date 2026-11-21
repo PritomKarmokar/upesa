@@ -9,3 +9,7 @@ from .users import (
 from .login import (
     LoginSerializer
 )
+
+from .logout import (
+    LogoutSerializer
+)

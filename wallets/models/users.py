@@ -87,6 +87,9 @@ class WalletUser(models.Model):
     failed_login_attempts = models.PositiveIntegerField(default=0)
     locked_until = models.DateTimeField(blank=True, null=True)
 
+    # Incremented on logout to invalidate all previously issued tokens
+    token_version = models.PositiveIntegerField(default=0)
+
     objects = WalletUserManager()
 
     class Meta:
@@ -119,8 +122,9 @@ class WalletUser(models.Model):
     def register_successful_login_attempt(self):
         self.failed_login_attempts = 0
         self.locked_until = None
+        self.token_version += 1
         self.last_login = timezone.now()
-        self.save(update_fields=["failed_login_attempts", "locked_until", "last_login"])
+        self.save(update_fields=["failed_login_attempts", "locked_until", "token_version", "last_login"])
 
     def register_failed_login_attempts(self):
         self.failed_login_attempts += 1
@@ -131,3 +135,9 @@ class WalletUser(models.Model):
     def update_last_login(self):
         self.last_login = timezone.now()
         self.save(update_fields=["last_login"])
+
+    def perform_logout_operation(self) -> bool:
+        self.token_version += 1
+        self.updated_at = timezone.now()
+        self.save(update_fields=["token_version", "updated_at"])
+        return True

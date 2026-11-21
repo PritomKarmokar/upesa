@@ -77,6 +77,7 @@ class WalletUserAdmin(admin.ModelAdmin):
                 "classes": ("collapse",),
                 "fields": (
                     "last_login",
+                    "token_version",
                     "failed_login_attempts",
                     "locked_until",
                 ),

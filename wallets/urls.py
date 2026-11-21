@@ -3,6 +3,7 @@ from django.urls import path
 from wallets.views import (
     CreateWalletView,
     WalletUserLoginView,
+    WalletLogoutView,
     CreateWalletUserAPIView
 )
 
@@ -23,6 +24,11 @@ api_urls = [
         f"{api_base_url}/user/login/",
         WalletUserLoginView.as_view(),
         name="api_v1_user_login",
+    ),
+    path(
+        f"{api_base_url}/user/logout/",
+        WalletLogoutView.as_view(),
+        name="api_v1_user_logout",
     )
 ]
 

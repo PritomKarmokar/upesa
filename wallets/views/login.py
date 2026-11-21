@@ -50,9 +50,8 @@ class WalletUserLoginView(APIView):
             )
 
 
-        wallet_user.register_successful_login_attempt()
-
         refresh_token = RefreshToken.for_user(wallet_user)
+        refresh_token["token_version"] = wallet_user.token_version  # adding token version to the refresh token
         access_token = refresh_token.access_token
         response_data = {
             "access_token": str(access_token),

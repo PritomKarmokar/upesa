@@ -11,4 +11,9 @@ class UserAuthentication(JWTAuthentication):
             raise AuthenticationFailed(
                 "User not found or not active"
             )
+        if validated_token.get("token_version") != user.token_version:
+            raise AuthenticationFailed(
+                "Token is no longer valid. Please log in again."
+            )
+
         return user
