@@ -72,6 +72,17 @@ class WalletUserAdmin(admin.ModelAdmin):
             },
         ),
         (
+            "Login Information",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "last_login",
+                    "failed_login_attempts",
+                    "locked_until",
+                ),
+            },
+        ),
+        (
             "Timestamps Information",
             {
                 "classes": ("collapse",),
